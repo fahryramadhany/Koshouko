@@ -1,0 +1,53 @@
+/* ===================================
+   KOSHOUKO COLOR THEME
+   Central color definitions and color variables
+   =================================== */
+
+:root {
+    /* Primary Colors */
+    --color-primary: #8B5A2B;
+    --color-primary-light: #A67C52;
+    --color-primary-dark: #6B4423;
+    
+    /* Secondary Colors */
+    --color-secondary: #E6A3B0;
+    --color-secondary-light: #F0C0CC;
+    --color-secondary-dark: #D68599;
+    
+    /* Accent Colors */
+    --color-accent: #B63A2B;
+    --color-accent-light: #D45A4A;
+    --color-accent-dark: #962A1B;
+    
+    /* Neutral Colors */
+    --color-dark: #3B2A1A;
+    --color-medium: #6B4F3F;
+    --color-light: #F0E4C8;
+    --color-lighter: #FEF9F3;
+    --color-white: #FFFFFF;
+    
+    /* Background Colors */
+    --bg-gradient-1: linear-gradient(135deg, #8B5A2B 0%, #B63A2B 100%);
+    --bg-gradient-2: linear-gradient(135deg, #E6CFA1 0%, #F3E9D2 100%);
+    --bg-gradient-light: linear-gradient(135deg, rgba(230, 207, 161, 0.3) 0%, rgba(243, 233, 210, 0.3) 100%);
+    
+    /* Status Colors */
+    --color-success: #28a745;
+    --color-warning: #ffc107;
+    --color-danger: #dc3545;
+    --color-info: #17a2b8;
+}
+
+/* Text Colors */
+.text-primary { color: var(--color-primary); }
+.text-secondary { color: var(--color-secondary); }
+.text-accent { color: var(--color-accent); }
+.text-dark { color: var(--color-dark); }
+.text-light { color: var(--color-light); }
+
+/* Background Colors */
+.bg-primary { background-color: var(--color-primary); }
+.bg-secondary { background-color: var(--color-secondary); }
+.bg-accent { background-color: var(--color-accent); }
+.bg-light { background-color: var(--color-light); }
+.bg-lighter { background-color: var(--color-lighter); }

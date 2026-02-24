@@ -81,9 +81,9 @@
             </div>
 
             @if($books->count() > 0)
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     @foreach($books as $book)
-                        <div class="gradient-card rounded-2xl overflow-hidden hover:shadow-2xl transition duration-300 group">
+                        <div class="gradient-card rounded-2xl overflow-hidden hover:shadow-2xl transition duration-300 group flex flex-col">
                             <!-- Book Cover -->
                             <div class="relative h-64 bg-gradient-to-br from-koshouko-wood/10 to-koshouko-red/10 flex items-center justify-center overflow-hidden">
                                 @if($book->cover_image && file_exists(public_path($book->cover_image)))
@@ -91,7 +91,6 @@
                                 @else
                                     <div class="text-6xl opacity-30 group-hover:scale-110 transition duration-300">📖</div>
                                 @endif
-                                
                                 <!-- Bookmark Button -->
                                 <form action="{{ route('books.bookmark', $book) }}" method="POST" class="absolute top-3 right-3">
                                     @csrf
@@ -101,7 +100,6 @@
                                         </span>
                                     </button>
                                 </form>
-
                                 <!-- Availability Badge -->
                                 <div class="absolute top-3 left-3">
                                     @if($book->available_copies > 0)
@@ -115,27 +113,23 @@
                                     @endif
                                 </div>
                             </div>
-
                             <!-- Book Info -->
-                            <div class="p-5">
+                            <div class="p-5 flex flex-col flex-1">
                                 <h3 class="font-bold text-koshouko-text line-clamp-2 mb-1">{{ $book->title }}</h3>
                                 <p class="text-sm text-koshouko-text-muted mb-3">{{ $book->author }}</p>
-                                
                                 <div class="flex items-center justify-between mb-4 pb-4 border-b border-koshouko-border">
                                     <span class="text-xs bg-koshouko-wood/10 text-koshouko-wood px-3 py-1 rounded-full font-semibold">{{ $book->category->name }}</span>
                                     <span class="text-xs text-koshouko-text-muted">{{ $book->publication_year ?? '-' }}</span>
                                 </div>
-
                                 <p class="text-sm text-koshouko-text-muted mb-4 line-clamp-2">{{ $book->description ?? 'Tidak ada deskripsi' }}</p>
-
-                                <div class="flex gap-2">
+                                <div class="flex gap-2 mt-auto">
                                     <a href="{{ route('books.show', $book) }}" class="flex-1 px-3 py-2 bg-koshouko-wood/10 text-koshouko-wood rounded-lg font-semibold hover:bg-koshouko-wood/20 transition text-center text-sm border border-koshouko-border">
                                         Lihat Detail
                                     </a>
                                     @if($book->available_copies > 0)
-                                        <button type="button" onclick="borrowBook({{ $book->id }})" class="flex-1 px-3 py-2 btn-koshouko rounded-lg font-semibold transition text-sm">
+                                        <a href="{{ route('books.borrow', $book) }}" class="flex-1 px-3 py-2 btn-koshouko rounded-lg font-semibold transition text-sm text-center">
                                             Pinjam
-                                        </button>
+                                        </a>
                                     @endif
                                 </div>
                             </div>
@@ -160,87 +154,8 @@
         </div>
     </div>
 
-    <!-- Borrow Modal -->
-    <div id="borrowModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4" role="dialog" aria-modal="true" aria-labelledby="borrowModalSimpleTitle" aria-describedby="borrowFormErrors">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6" tabindex="-1">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">📚 Pinjam Buku</h3>
-            <p class="text-gray-600 mb-6" id="borrowBookTitle"></p>
-            
-            <form id="borrowForm" method="POST" class="space-y-4">
-                @csrf
-                <input type="hidden" name="from" value="modal">
-                <div id="borrowFormErrors" role="status" aria-live="polite" class="sr-only"></div>
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-900">
-                    <p class="font-semibold mb-2">Ketentuan Peminjaman:</p>
-                    <ul class="space-y-1 text-xs">
-                        <li>• Durasi peminjaman: 14 hari</li>
-                        <li>• Dapat diperpanjang 2 kali</li>
-                        <li>• Denda keterlambatan: Rp 5.000/hari</li>
-                    </ul>
-                </div>
-
-                <div class="flex gap-3">
-                    <button type="button" onclick="closeBorrowModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition">
-                        Batal
-                    </button>
-                    <button type="submit" class="flex-1 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-semibold hover:shadow-md transition">
-                        Pinjam Sekarang
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        function borrowBook(bookId) {
-            const modal = document.getElementById('borrowModal');
-            const form = document.getElementById('borrowForm');
-            const titleEl = document.getElementById('borrowBookTitle');
-            
-            // Get book title from the card (you might want to use an API call instead)
-            const bookCard = event?.target?.closest('[class*="grid"]')?.querySelector('h3');
-            if (bookCard && titleEl) {
-                titleEl.textContent = 'Anda akan meminjam: ' + bookCard.textContent;
-            }
-
-            // Ensure POST goes to the correct endpoint and set the book_id on the form
-            form.action = '/borrowings';
-            const bookInput = form.querySelector('input[name="book_id"]') || form.querySelector('select[name="book_id"]');
-            if (bookInput) {
-                if (bookInput.tagName === 'SELECT') {
-                    bookInput.value = String(bookId);
-                    bookInput.dispatchEvent(new Event('change', { bubbles: true }));
-                } else {
-                    bookInput.value = String(bookId);
-                }
-            } else {
-                const hidden = document.createElement('input');
-                hidden.type = 'hidden';
-                hidden.name = 'book_id';
-                hidden.value = String(bookId);
-                form.appendChild(hidden);
-            }
-
-            modal.classList.remove('hidden');
-            setTimeout(()=>{ form.querySelector('button, input, select, textarea')?.focus(); }, 10);
-            modal._release = (function() {
-                function handler(e){ if (e.key !== 'Tab') return; const focusable = Array.from(modal.querySelectorAll('a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled])')); if (!focusable.length) return; const first = focusable[0]; const last = focusable[focusable.length-1]; if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); } }
-                document.addEventListener('keydown', handler);
-                return () => document.removeEventListener('keydown', handler);
-            })();
-        }
-
-        function closeBorrowModal() {
-            document.getElementById('borrowModal').classList.add('hidden');
-        }
-
-        // Close modal when clicking backdrop
-        document.getElementById('borrowModal')?.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeBorrowModal();
-            }
-        });
-    </script>
+    <!-- Modal removed: 'Pinjam' on book-list now opens the full borrowing form page (books.borrow).
+         Modal-based quick-flow is preserved only on dashboard (if present) to keep quick actions available. -->
 
     @if($errors->any() && old('from') === 'modal')
         <script>

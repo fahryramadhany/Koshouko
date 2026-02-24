@@ -6,19 +6,23 @@
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/member-pages.css') }}">
 
-<div class="max-w-3xl mx-auto">
+<div class="max-w-3xl mx-auto pt-6 pb-4 px-6 content-with-spacing">
     <!-- Header -->
-    <div class="mb-8">
-        <p class="text-koshouko-text-muted mb-2">
-            <a href="{{ route('books.index') }}" class="text-koshouko-wood hover:underline">← Kembali ke Daftar Buku</a>
-        </p>
-        <h1 class="text-3xl font-bold text-koshouko-text">Formulir Peminjaman Buku</h1>
-        <p class="text-koshouko-text-muted mt-2">Isi formulir di bawah untuk meminjam buku</p>
-    </div>
+    <div class="mb-8 header-row">
+        <div>
+            <h1 class="text-3xl font-bold text-koshouko-text">Formulir Peminjaman Buku</h1>
+            <p class="text-koshouko-text-muted mt-2">Isi formulir di bawah untuk meminjam buku</p>
+        </div>
+
+        <!-- Prominent back button for quicker navigation (styled via CSS for consistency) -->
+        <div class="header-actions">
+            <a href="{{ route('books.index') }}" class="px-4 py-2 border-2 border-koshouko-border text-koshouko-wood rounded-lg font-semibold hover:bg-koshouko-cream transition back-button" title="Kembali ke Daftar Buku">← Kembali</a>
+        </div>
+    </div> 
 
     <!-- Form Card -->
     <div class="gradient-card rounded-2xl p-8">
-        <form action="{{ route('borrowings.store') }}" method="POST" class="space-y-6">
+        <form action="{{ route('borrowings.store') }}" method="POST" class="space-y-6 borrow-form">
             @csrf
 
             <!-- Book Selection Section -->
@@ -271,10 +275,10 @@
 
             <!-- Action Buttons -->
             <div class="flex gap-4 pt-6 border-t-2 border-koshouko-border">
-                <a href="{{ route('books.index') }}" class="px-6 py-3 border-2 border-koshouko-border text-koshouko-wood rounded-lg font-semibold hover:bg-koshouko-cream transition">
+                <a href="{{ route('books.index') }}" class="px-6 py-3 bg-white text-koshouko-wood rounded-lg font-semibold border-2 border-koshouko-wood hover:bg-koshouko-wood/5 transition">
                     ← Batal
                 </a>
-                <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white rounded-lg font-semibold hover:shadow-lg transition btn-koshouko">
+                <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white rounded-lg font-semibold hover:shadow-lg transition">
                     ✓ Ajukan Peminjaman
                 </button>
             </div>

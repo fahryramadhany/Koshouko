@@ -123,8 +123,20 @@
                                 @foreach($recentBorrowings as $borrowing)
                                     <tr class="hover:bg-koshouko-cream-light transition">
                                         <td class="px-6 py-4">
-                                            <p class="font-semibold text-koshouko-text">{{ $borrowing->book->title }}</p>
-                                            <p class="text-xs text-koshouko-text-muted">{{ $borrowing->book->author }}</p>
+                                            <div class="flex items-center gap-3">
+                                                <!-- Book Cover -->
+                                                <div class="w-10 h-14 bg-gradient-to-br from-koshouko-wood/10 to-koshouko-red/10 rounded flex items-center justify-center flex-shrink-0 border border-koshouko-border overflow-hidden">
+                                                    @if($borrowing->book->cover_image && file_exists(public_path($borrowing->book->cover_image)))
+                                                        <img src="{{ asset($borrowing->book->cover_image) }}" alt="{{ $borrowing->book->title }}" class="w-full h-full object-cover">
+                                                    @else
+                                                        <span class="text-lg opacity-50">📖</span>
+                                                    @endif
+                                                </div>
+                                                <div>
+                                                    <p class="font-semibold text-koshouko-text text-sm">{{ $borrowing->book->title }}</p>
+                                                    <p class="text-xs text-koshouko-text-muted">{{ $borrowing->book->author }}</p>
+                                                </div>
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4">
                                             <p class="text-sm font-medium text-koshouko-text">{{ $borrowing->borrowed_at ? $borrowing->borrowed_at->format('d M Y') : '-' }}</p>

@@ -1,0 +1,47 @@
+/* ===================================
+   KOSHOUKO NAVBAR
+   Fixed navbar positioning and styling
+   =================================== */
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    background-color: #F0E4C8 !important;
+    border-bottom: 1px solid rgba(212, 201, 176, 0.4) !important;
+    box-shadow: 0 2px 4px rgba(139, 90, 43, 0.08) !important;
+    height: 88px;
+}
+
+/* Shift navbar on large screens to account for sidebar */
+@media (min-width: 1024px) {
+    .navbar {
+        left: 16rem;
+        width: calc(100% - 16rem);
+    }
+}
+
+/* Navbar content centering */
+.navbar > div {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* Navbar Links */
+.navbar a {
+    color: #3B2A1A;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+    color: #8B5A2B;
+}
+
+/* Navbar Button */
+.navbar .btn {
+    margin-left: auto;
+}

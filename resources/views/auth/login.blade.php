@@ -184,29 +184,7 @@
                         </a>
                     </p>
 
-                    <!-- Demo Credentials -->
-                    <div class="mt-8 p-4 bg-koshouko-cream-light rounded-lg border border-koshouko-border">
-                        <p class="text-xs text-koshouko-text-muted mb-3 font-semibold">🔐 Demo Credentials:</p>
-                        <div class="space-y-2 text-xs">
-                            <div>
-                                <p class="text-koshouko-text-muted">Admin:</p>
-                                <p class="font-mono text-koshouko-wood">admin@perpustakaan.com</p>
-                            </div>
-                            <div>
-                                <p class="text-koshouko-text-muted">Password:</p>
-                                <p class="font-mono text-koshouko-wood">password</p>
-                            </div>
-                        </div>
-                    </div>
 
-                    @if(config('app.debug') || app()->environment('local'))
-                        <div class="mt-4 text-center">
-                            <a href="{{ route('preview.borrowing.form') }}" class="inline-block px-4 py-2 bg-yellow-100 border border-yellow-300 text-koshouko-wood rounded-lg text-sm font-semibold hover:shadow-sm transition">
-                                🔎 Preview Formulir Peminjaman (dev)
-                            </a>
-                            <p class="text-xs text-koshouko-text-muted mt-2">Hanya untuk development — jangan aktifkan di production.</p>
-                        </div>
-                    @endif
                 </div>
 
                 <!-- Footer -->

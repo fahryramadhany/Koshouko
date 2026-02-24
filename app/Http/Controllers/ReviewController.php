@@ -10,14 +10,27 @@ use Illuminate\Support\Facades\Auth;
 class ReviewController extends Controller
 {
     /**
+     * List all reviews (admin & pustakawan only)
+     */
+    public function index()
+    {
+        $reviews = Review::with(['user', 'book'])
+            ->latest()
+            ->paginate(15);
+
+        return view('admin.reviews.index', ['reviews' => $reviews]);
+    }
+
+    /**
      * Store a newly created review
      */
     public function store(Request $request, Book $book)
     {
         $user = Auth::user();
 
-        // Check if user already reviewed this book
-        $existingReview = Review::where('user_id', $user->id)
+        // Check if user already reviewed this book (including soft-deleted)
+        $existingReview = Review::withTrashed()
+            ->where('user_id', $user->id)
             ->where('book_id', $book->id)
             ->first();
 
@@ -34,6 +47,10 @@ class ReviewController extends Controller
         ]);
 
         if ($existingReview) {
+            // If soft-deleted, restore it
+            if ($existingReview->trashed()) {
+                $existingReview->restore();
+            }
             // Update existing review
             $existingReview->update($validated);
             $message = 'Ulasan berhasil diperbarui';
@@ -69,10 +86,17 @@ class ReviewController extends Controller
     }
 
     /**
-     * Delete a review
+     * Delete a review (admin & pustakawan can delete any, users can only delete theirs)
      */
     public function destroy(Review $review)
     {
+        // Admin and pustakawan can delete any review
+        if (auth()->user()->isAdmin() || auth()->user()->isPustakawan()) {
+            $review->delete();
+            return back()->with('success', 'Ulasan berhasil dihapus');
+        }
+
+        // Regular users can only delete their own
         $this->authorize('delete', $review);
 
         $book = $review->book;

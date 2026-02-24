@@ -1,0 +1,174 @@
+/* ===================================
+   KOSHOUKO CARDS
+   Card and container styles
+   =================================== */
+
+.gradient-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border: 1px solid rgba(139, 90, 43, 0.1) !important;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    opacity: 1 !important;
+}
+
+.gradient-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(139, 90, 43, 0.15) !important;
+}
+
+/* Card Light Variant */
+.card-light {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border: 1px solid rgba(139, 90, 43, 0.1) !important;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    opacity: 1 !important;
+}
+
+/* Stat Card */
+.stat-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border: 1px solid rgba(139, 90, 43, 0.1) !important;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    transition: all 0.3s ease;
+    opacity: 1 !important;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    text-align: center;
+}
+
+.stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(139, 90, 43, 0.2) !important;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #8B5A2B;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6B4F3F;
+    margin-top: 0.5rem;
+}
+
+/* Member Gradient Card */
+.member-gradient-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border: 1px solid rgba(139, 90, 43, 0.1) !important;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    opacity: 1 !important;
+}
+
+.member-stat-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border: 1px solid rgba(139, 90, 43, 0.1) !important;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    opacity: 1 !important;
+}
+
+/* Borrowing Card */
+.borrowing-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border: 1px solid rgba(139, 90, 43, 0.1) !important;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    opacity: 1 !important;
+}
+
+/* Book Item Card */
+.book-item {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border: 1px solid rgba(139, 90, 43, 0.1) !important;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    opacity: 1 !important;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.book-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(139, 90, 43, 0.15) !important;
+}
+
+/* Admin Cards */
+.admin-stat-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+.admin-table-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+.admin-category-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+.admin-borrowing-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+.admin-report-section {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+.admin-form-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+/* Welcome Section */
+.welcome-section {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border: 2px solid rgba(139, 90, 43, 0.2);
+    border-radius: 1.5rem;
+}
+
+/* Books Filter Card */
+.books-filter-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+/* Book Detail Section */
+.book-detail-section {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+/* Profile Cards */
+.profile-info-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+.profile-history-item {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}

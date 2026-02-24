@@ -1,0 +1,105 @@
+/* ===================================
+   KOSHOUKO SIDEBAR
+   Sidebar positioning, navigation, and responsive behavior
+   =================================== */
+
+/* Sidebar Container */
+.sidebar {
+    background-color: #F0E4C8 !important;
+    border-right: 1px solid rgba(212, 201, 176, 0.4) !important;
+    z-index: 50 !important;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 16rem;
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+/* Mobile Sidebar Toggle */
+.sidebar.-translate-x-full {
+    transform: translateX(-100%) !important;
+}
+
+.sidebar.translate-x-0 {
+    transform: translateX(0) !important;
+}
+
+/* Mobile Menu Backdrop */
+#mobile-menu-backdrop {
+    z-index: 40 !important;
+}
+
+#mobile-menu-backdrop.hidden {
+    display: none !important;
+}
+
+/* Sidebar Navigation Item */
+.sidebar-nav-item {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+    color: #3B2A1A;
+    text-decoration: none;
+    margin-bottom: 0.25rem;
+}
+
+.sidebar-nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: linear-gradient(135deg, #8B5A2B 0%, #B63A2B 100%);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+    transform-origin: center;
+}
+
+.sidebar-nav-item.active::before {
+    transform: scaleY(1);
+}
+
+.sidebar-nav-item.active {
+    background: linear-gradient(135deg, #8B5A2B 0%, #B63A2B 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+}
+
+.sidebar-nav-item:hover {
+    background: rgba(139, 90, 43, 0.1);
+}
+
+/* Sidebar Section Title */
+.sidebar-section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #8B5A2B;
+    text-transform: uppercase;
+    margin: 1rem 0 0.5rem 0;
+    padding: 0 1rem;
+}
+
+/* Responsive: Hide sidebar on mobile by default */
+@media (max-width: 1023px) {
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        transform: translateX(-100%);
+    }
+}
+
+/* Main content margin on large screens */
+@media (min-width: 1024px) {
+    .main-content {
+        margin-left: 16rem;
+    }
+}

@@ -392,6 +392,9 @@
                     }
 
                     function openModal() {
+                        // guard: jangan buka jika sudah terbuka (mencegah double-popup)
+                        if (!modal.classList.contains('hidden')) return;
+
                         modal.classList.remove('hidden');
                         const form = modal.querySelector('#borrowingForm');
 

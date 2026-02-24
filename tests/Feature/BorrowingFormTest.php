@@ -50,8 +50,13 @@ class BorrowingFormTest extends TestCase
         ]);
 
         $this->actingAs($user);
-        $response = $this->get('/books/' . $book->id . '/borrow');
 
+        // index page should link to the full-form for the book
+        $index = $this->get('/books');
+        $index->assertSee(route('books.borrow', $book));
+
+        // visiting the full-form URL must show the full borrowing form
+        $response = $this->get('/books/' . $book->id . '/borrow');
         $response->assertStatus(200);
         $response->assertSee('Buku Test Prefill');
         // assert the option is present and has the selected attribute
@@ -76,6 +81,34 @@ class BorrowingFormTest extends TestCase
         $follow = $this->followingRedirects()->get('/dashboard');
         $follow->assertSee('openBorrowModalBtn');
         $follow->assertSee('name="from" value="modal"', false);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function modal_shows_link_to_full_form_for_selected_book(): void
+    {
+        $user = User::factory()->create();
+        $category = \App\Models\Category::create(['name' => 'Umum', 'slug' => 'umum']);
+        $book = \App\Models\Book::create([
+            'title' => 'Buku Test Modal Link',
+            'author' => 'Pengarang Contoh',
+            'isbn' => 'TEST-ISBN-MODAL-001',
+            'category_id' => $category->id,
+            'total_copies' => 2,
+            'available_copies' => 2,
+        ]);
+
+        $this->actingAs($user);
+
+        $resp = $this->get('/books/' . $book->id);
+        $resp->assertStatus(200);
+
+        // the modal includes a visible link to the full-form route for the selected book
+        $resp->assertSee(route('books.borrow', $book));
+
+        // visiting the full-form URL must show the full borrowing form
+        $follow = $this->get(route('books.borrow', $book));
+        $follow->assertStatus(200);
+        $follow->assertSee('Tanggal Pinjam');
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -122,6 +155,37 @@ class BorrowingFormTest extends TestCase
 
         $response = $this->post('/books/' . $book->id . '/borrow', $payload);
 
+        $response->assertRedirect(route('borrowings.index'));
+        $this->assertDatabaseHas('borrowings', ['book_id' => $book->id, 'user_id' => $user->id]);
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
+    public function post_to_books_index_with_modal_payload_is_supported(): void
+    {
+        $user = User::factory()->create();
+        $category = \App\Models\Category::create(['name' => 'Umum', 'slug' => 'umum']);
+        $book = \App\Models\Book::create([
+            'title' => 'Buku Test POST Index Legacy',
+            'author' => 'Pengarang Contoh',
+            'isbn' => 'TEST-ISBN-POST-INDEX',
+            'category_id' => $category->id,
+            'total_copies' => 2,
+            'available_copies' => 2,
+        ]);
+
+        $this->actingAs($user);
+
+        $payload = [
+            'from' => 'modal',
+            'book_id' => $book->id,
+            'duration_days' => 14,
+            'due_date' => now()->addDays(14)->format('Y-m-d'),
+            'agree_terms' => 'on',
+            'agree_condition' => 'on',
+            'agree_loss' => 'on',
+        ];
+
+        $response = $this->post('/books', $payload);
         $response->assertRedirect(route('borrowings.index'));
         $this->assertDatabaseHas('borrowings', ['book_id' => $book->id, 'user_id' => $user->id]);
     }

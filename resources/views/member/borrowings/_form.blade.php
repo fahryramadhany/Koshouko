@@ -276,7 +276,15 @@
             <a href="{{ route('books.index') }}" class="px-6 py-3 border-2 border-koshouko-border text-koshouko-wood rounded-lg font-semibold hover:bg-koshouko-cream transition">
                 ← Batal
             </a>
-            <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white rounded-lg font-semibold hover:shadow-lg transition btn-koshouko">
+
+            {{-- Jika modal dibuka dari kartu buku, tawarkan link ke formulir penuh --}}
+            <a id="goToFullFormBtn" href="{{ isset($selectedBookId) ? route('books.borrow', $selectedBookId) : '#' }}"
+               class="hidden sm:inline-block px-6 py-3 border-2 border-koshouko-border text-koshouko-wood rounded-lg font-semibold hover:bg-koshouko-cream transition"
+               title="Isi formulir peminjaman lengkap">
+                📝 Isi Formulir Lengkap
+            </a>
+
+            <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white rounded-lg font-semibold hover:shadow-lg transition btn-koshouko" id="modalPrimarySubmit">
                 ✓ Ajukan Peminjaman
             </button>
         </div>

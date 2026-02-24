@@ -5,9 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Borrowing;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-use BaconQrCode\Writer;
 
 class AdminController extends Controller
 {
@@ -35,12 +32,29 @@ class AdminController extends Controller
         ]);
     }
 
-    public function borrowings()
+    public function borrowings(\Illuminate\Http\Request $request)
     {
-        $borrowings = Borrowing::with('user', 'book')
-            ->orderByDesc('borrowed_at')
-            ->limit(15)
-            ->get();
+        $query = Borrowing::with('user', 'book')->orderByDesc('borrowed_at');
+
+        // Filter by status
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('status', $request->status);
+        }
+
+        // Search by member name or book title
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->whereHas('user', function($userQuery) use ($search) {
+                    $userQuery->where('name', 'like', '%' . $search . '%')
+                              ->orWhere('email', 'like', '%' . $search . '%');
+                })->orWhereHas('book', function($bookQuery) use ($search) {
+                    $bookQuery->where('title', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        $borrowings = $query->paginate(20);
 
         return view('admin.borrowings.index', [
             'borrowings' => $borrowings,
@@ -53,36 +67,14 @@ class AdminController extends Controller
             return back()->with('error', 'Peminjaman sudah diproses.');
         }
 
-        // Generate QR code with borrowing information
-        $qrData = "ID: {$borrowing->id} | Member: {$borrowing->user->name} | Book: {$borrowing->book->title} | Due: {$borrowing->due_date->format('Y-m-d')}";
-        
-        // Create QR code renderer
-        $renderer = new ImageRenderer(
-            new RendererStyle(200),
-        );
-        $writer = new Writer($renderer);
-        
-        // Create public/qr directory if not exists
-        if (!is_dir(public_path('qr'))) {
-            mkdir(public_path('qr'), 0755, true);
-        }
-        
-        // Generate filename
-        $filename = 'borrowing_' . $borrowing->id . '.png';
-        $filepath = public_path('qr/' . $filename);
-        
-        // Write QR code to file
-        $writer->writeFile($qrData, $filepath);
-        
-        // Save QR code path to database
+        // Update borrowing status to approved
         $borrowing->update([
             'status' => 'approved',
-            'qr_code' => 'qr/' . $filename,
             'approved_by' => Auth::id(),
             'approved_at' => now(),
         ]);
 
-        return back()->with('success', 'Peminjaman berhasil disetujui. QR code telah dibuat.');
+        return back()->with('success', 'Peminjaman berhasil disetujui.');
     }
 
     public function rejectBorrowing(Borrowing $borrowing, \Illuminate\Http\Request $request)

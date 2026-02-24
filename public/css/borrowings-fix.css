@@ -1,0 +1,85 @@
+/* Scoped fixes for the Peminjaman (borrowings) page
+   Ensures cards/tables fill available width and align with sidebar/navbar
+*/
+
+.borrowings-page-wrapper {
+    /* Clear the fixed navbar at top (navbar height ~110px) */
+    margin-top: 110px;
+    /* Add small horizontal padding for breathing room */
+    padding-left: 1rem;
+    padding-right: 1rem;
+    width: 100%;
+    display: block;
+}
+
+.borrowings-page-wrapper .content-container {
+    /* Fill available width - no max-width constraint */
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+
+/* On large screens account for the fixed sidebar (16rem) so content is not covered */
+@media (min-width: 1024px) {
+    .borrowings-page-wrapper {
+        margin-left: 16rem;
+        width: calc(100% - 16rem);
+    }
+    .borrowings-page-wrapper .content-container {
+        max-width: calc(100% - 2rem);
+    }
+}
+
+/* Ensure cards/tables fill their container width */
+.borrowings-page-wrapper .gradient-card {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    max-width: none !important;
+}
+
+.borrowings-page-wrapper .admin-table-card {
+    width: 100% !important;
+    max-width: none !important;
+}
+
+/* Table wrapper - ensure overflow displays properly */
+.borrowings-page-wrapper .overflow-x-auto {
+    width: 100% !important;
+    overflow-x: auto !important;
+}
+
+/* Table should fill card and use available minimum width */
+.borrowings-page-wrapper table {
+    width: 100%;
+    min-width: 100%;
+}
+
+/* Direct child divs in wrapper occupy full width */
+.borrowings-page-wrapper > div {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Ensure cards don't hide overflowed content */
+.borrowings-page-wrapper .gradient-card,
+.borrowings-page-wrapper .admin-table-card {
+    overflow: visible !important;
+}
+
+/* On large screens match the books page spacing: bigger bottom padding so footer is lower */
+@media (min-width: 1024px) {
+    .borrowings-page-wrapper {
+        padding-bottom: 12rem !important; /* ~192px - visually match Kelola Buku */
+    }
+    .borrowings-page-wrapper .gradient-card,
+    .borrowings-page-wrapper .admin-table-card {
+        margin-bottom: 1.25rem !important;
+    }
+    .borrowings-page-wrapper .content-container.mt-6 {
+        margin-top: 1rem !important;
+    }
+}
+

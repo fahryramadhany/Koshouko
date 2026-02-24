@@ -9,11 +9,21 @@
     --accent: #B63A2B;
 }
 
-/* Navbar Styling */
+/* Navbar Styling - fixed to top so it remains visible across pages */
 .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
     background-color: #F0E4C8 !important;
     border-bottom: 1px solid rgba(212, 201, 176, 0.4) !important;
     box-shadow: 0 2px 4px rgba(139, 90, 43, 0.08) !important;
+}
+
+/* On large screens, shift navbar to account for the sidebar width */
+@media (min-width: 1024px) {
+    .navbar { left: 16rem; width: calc(100% - 16rem); }
 }
 
 /* Sidebar Styling */
@@ -157,6 +167,18 @@
     color: #3B2A1A;
     font-weight: 700;
     letter-spacing: -0.5px;
+}
+
+/* Add top padding for main content so it is not hidden behind the fixed navbar */
+.main-with-navbar {
+    padding-top: 68px; /* navbar height + small gap */
+}
+
+@media (min-width: 1024px) {
+    .main-with-navbar { 
+        padding-top: 68px;
+        margin-left: 16rem; /* offset for fixed sidebar (64 * 0.25rem) */
+    }
 }
 
 /* Button Styling */

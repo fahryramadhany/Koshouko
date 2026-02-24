@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Models\Borrowing;
 use App\Models\Report;
 use App\Models\Review;
+use App\Models\User;
 use App\Policies\BorrowingPolicy;
 use App\Policies\ReportPolicy;
 use App\Policies\ReviewPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
         Borrowing::class => BorrowingPolicy::class,
         Report::class => ReportPolicy::class,
         Review::class => ReviewPolicy::class,
+        User::class => UserPolicy::class,
     ];
 
     /**

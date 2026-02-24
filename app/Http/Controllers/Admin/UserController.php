@@ -8,13 +8,25 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('role')
-            ->where('role_id', '!=', 1) // Exclude super admin
-            ->paginate(15);
+        $query = User::with('role')
+            ->where('role_id', '!=', 1); // Exclude super admin
 
-        return view('admin.users.index', ['users' => $users]);
+        // Allow filtering by role name (admin sees this filter in the UI)
+        if ($request->filled('role') && in_array($request->role, ['pustakawan', 'member', 'all'])) {
+            if ($request->role !== 'all') {
+                $query->whereHas('role', function ($q) use ($request) {
+                    $q->where('name', $request->role);
+                });
+            }
+        }
+
+        $users = $query->orderBy('name')->paginate(15)->withQueryString();
+
+        $roles = \App\Models\Role::where('name', '!=', 'admin')->get();
+
+        return view('admin.users.index', ['users' => $users, 'roles' => $roles]);
     }
 
     public function create()
@@ -78,12 +90,17 @@ class UserController extends Controller
     }
 
     // User Reports - ONLY for Librarian (read-only)
-    public function reports()
+    public function reports(Request $request)
     {
+        // Show only members to pustakawan
         $users = User::with('role')
-            ->where('role_id', '!=', 1) // Exclude super admin
+            ->whereHas('role', function ($q) {
+                $q->where('name', 'member');
+            })
+            ->orderBy('name')
             ->paginate(15);
 
-        return view('admin.users.reports', ['users' => $users]);
+        // Librarian view (read-only) - placed under pustakawan views
+        return view('pustakawan.users.index', ['users' => $users]);
     }
 }

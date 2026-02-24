@@ -3,6 +3,40 @@
    CSS untuk halaman-halaman member (dashboard, profile, borrowings, books)
    =================================== */
 
+/* Backwards-compatible aliases: some blade templates use generic class names
+   (e.g. .gradient-card, .btn-koshouko). Provide these to avoid visual breakage
+   when the build step wasn't executed and classes diverged. */
+.gradient-card {
+    border-radius: 1rem;
+    background-color: #FEF9F3 !important;
+    border: 1px solid rgba(139, 90, 43, 0.08) !important;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    transition: all 0.3s ease;
+}
+
+.gradient-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(139, 90, 43, 0.15) !important;
+}
+
+.btn-koshouko {
+    background: linear-gradient(135deg, #8B5A2B 0%, #B63A2B 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-koshouko:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 90, 43, 0.3);
+}
+
+
 /* Dashboard Page - Welcome Section */
 .welcome-section {
     background: #FEF9F3;

@@ -39,39 +39,8 @@ function switchTab(tab) {
  * @param {number} bookId - The ID of the book to borrow
  */
 function borrowBook(bookId) {
-    const modal = document.getElementById('borrowModal');
-    // support modal form id used across pages
-    const form = document.getElementById('borrowForm') || document.getElementById('borrowingForm');
-    const titleEl = document.getElementById('borrowBookTitle');
-
-    // Get book title from the card
-    const bookCard = event?.target?.closest('[class*="grid"]')?.querySelector('h3');
-    if (bookCard && titleEl) {
-        titleEl.textContent = 'Anda akan meminjam: ' + bookCard.textContent;
-    }
-
-    // POST must go to the collection endpoint; set book_id on the form instead of targeting the GET route
-    if (form) {
-        form.action = '/borrowings';
-        const bookInput = form.querySelector('input[name="book_id"]') || form.querySelector('select[name="book_id"]');
-        if (bookInput) {
-            if (bookInput.tagName === 'SELECT') {
-                bookInput.value = String(bookId);
-                bookInput.dispatchEvent(new Event('change', { bubbles: true }));
-            } else {
-                bookInput.value = String(bookId);
-            }
-        } else {
-            // create hidden input if not present
-            const hidden = document.createElement('input');
-            hidden.type = 'hidden';
-            hidden.name = 'book_id';
-            hidden.value = String(bookId);
-            form.appendChild(hidden);
-        }
-    }
-
-    modal && modal.classList.remove('hidden');
+    // Backward-compatibility: redirect to the full borrowing form page
+    window.location.href = '/books/' + bookId + '/borrow';
 }
 
 /**

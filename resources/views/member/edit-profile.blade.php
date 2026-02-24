@@ -4,9 +4,10 @@
 @section('page-title', '👤 Edit Profil Saya')
 
 @section('content')
+@use('Illuminate\Support\Facades\Storage')
 <link rel="stylesheet" href="{{ asset('css/member-pages.css') }}">
 
-<div class="max-w-4xl mx-auto">
+<div class="max-w-4xl mx-auto pt-28">
     @if($errors->any())
         <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-6 rounded-lg">
             <h4 class="font-bold text-red-700 mb-3">⚠️ Terjadi Kesalahan</h4>
@@ -32,6 +33,77 @@
         </div>
 
         <div class="p-8">
+            <!-- Profile Photo Section -->
+            <div class="mb-8 pb-8 border-b-2 border-koshouko-border">
+                <h4 class="font-bold text-koshouko-wood text-lg mb-6">📷 Foto Profil</h4>
+                
+                <div class="flex flex-col md:flex-row gap-8 items-start">
+                    <!-- Photo Display -->
+                    <div class="flex flex-col items-center">
+                        <div class="relative">
+                            @if($user->profile_photo)
+                                <img src="{{ Storage::url($user->profile_photo) }}" 
+                                     alt="Foto Profil {{ $user->name }}"
+                                     id="profilePhotoDisplay"
+                                     class="w-40 h-40 rounded-full object-cover border-4 border-koshouko-wood shadow-lg">
+                            @else
+                                <div class="w-40 h-40 rounded-full bg-gradient-to-br from-koshouko-wood/20 to-koshouko-red/20 border-4 border-koshouko-border flex items-center justify-center">
+                                    <div class="text-center">
+                                        <span class="text-4xl">👤</span>
+                                        <p class="text-koshouko-text-muted text-sm mt-2">Belum ada foto</p>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        @if($user->profile_photo)
+                            <p class="text-xs text-koshouko-text-muted mt-3 text-center">
+                                Diupload: {{ $user->updated_at->format('d M Y') }}
+                            </p>
+                        @endif
+                    </div>
+
+                    <!-- Photo Upload Info & Button -->
+                    <div class="flex-1">
+                        <div class="space-y-4">
+                            <div class="bg-koshouko-cream-light rounded-lg p-6 border-l-4 border-koshouko-wood">
+                                <p class="text-sm text-koshouko-text">
+                                    <strong>💡 Tips:</strong>
+                                </p>
+                                <ul class="text-xs text-koshouko-text-muted mt-2 space-y-1 ml-4 list-disc">
+                                    <li>Gunakan foto yang jelas dan profesional</li>
+                                    <li>Format: JPG, PNG, GIF, atau WebP</li>
+                                    <li>Ukuran maksimal: 2MB</li>
+                                    <li>Foto akan ditampilkan dalam bentuk lingkaran</li>
+                                </ul>
+                            </div>
+
+                            <div class="flex flex-col gap-2">
+                                          <a href="{{ route('profile-photo.edit', $user) }}" 
+                                              class="text-center px-6 py-3 btn-primary rounded-lg font-semibold hover:shadow-lg transition">
+                                    {{ $user->profile_photo ? '🖼️ Ganti Foto Profil' : '📤 Upload Foto Profil' }}
+                                </a>
+
+                                @if($user->profile_photo)
+                                    <form action="{{ route('profile-photo.destroy', $user) }}" method="POST" 
+                                          style="display: inline;"
+                                          onsubmit="return confirm('Apakah Anda yakin ingin menghapus foto profil?');">
+                                        @csrf
+                                        @method('DELETE')
+                                                <button type="submit" 
+                                                        class="w-full px-6 py-2 bg-red-600 text-white rounded-lg font-semibold hover:shadow-md transition border border-red-600 text-sm">
+                                            ❌ Hapus Foto
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
             <form action="{{ route('profile.update') }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
@@ -128,10 +200,10 @@
 
                 <!-- Actions -->
                 <div class="flex gap-4 pt-6 border-t border-koshouko-border">
-                    <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white rounded-lg font-semibold hover:shadow-lg transition btn-koshouko">
+                    <button type="submit" class="flex-1 px-6 py-3 bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white rounded-lg font-semibold hover:shadow-lg transition">
                         Simpan Perubahan
                     </button>
-                    <a href="{{ route('profile') }}" class="flex-1 px-6 py-3 bg-koshouko-cream-light text-koshouko-wood rounded-lg font-semibold hover:bg-koshouko-cream transition border-2 border-koshouko-border text-center">
+                    <a href="{{ route('profile') }}" class="flex-1 px-6 py-3 bg-white text-koshouko-wood rounded-lg font-semibold hover:bg-koshouko-wood/5 transition border-2 border-koshouko-wood text-center">
                         Batal
                     </a>
                 </div>
@@ -166,11 +238,12 @@
             <p class="text-sm text-koshouko-text-muted mb-4">
                 Untuk mengubah password, hubungi staf perpustakaan kami.
             </p>
-            <a href="{{ route('login') }}" class="inline-block px-4 py-2 bg-koshouko-wood/10 text-koshouko-wood rounded font-semibold hover:bg-koshouko-wood hover:text-white transition border border-koshouko-border text-sm">
+            <a href="{{ route('login') }}" class="inline-block px-4 py-2 bg-white text-koshouko-wood rounded font-semibold hover:bg-koshouko-wood hover:text-white transition border-2 border-koshouko-wood text-sm">
                 Keluar dari Akun
             </a>
         </div>
     </div>
 </div>
 
-@endsection
+
+

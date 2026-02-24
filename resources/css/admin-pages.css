@@ -3,6 +3,15 @@
    CSS untuk halaman-halaman admin (dashboard, books, users, categories, borrowings, reports)
    =================================== */
 
+/* Container for proper sidebar offset on desktop */
+@media (min-width: 1024px) {
+    .container.mx-auto {
+        margin-left: 0 !important;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
 /* Admin Stat Card */
 .admin-stat-card {
     background-color: #FEF9F3 !important;

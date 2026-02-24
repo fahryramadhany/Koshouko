@@ -25,12 +25,16 @@
                 @foreach($borrowings as $borrowing)
                     <div class="gradient-card rounded-2xl overflow-hidden hover:shadow-2xl transition" data-status="{{ $borrowing->status }}">
                         <div class="p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                            <!-- Book Info -->
+                            <!-- Book Cover & Info -->
                             <div class="flex-1">
                                 <div class="flex gap-4">
-                                    <!-- Book Icon -->
-                                    <div class="w-16 h-20 bg-gradient-to-br from-koshouko-wood/10 to-koshouko-red/10 rounded-lg flex items-center justify-center text-2xl flex-shrink-0 border border-koshouko-border">
-                                        📖
+                                    <!-- Book Cover -->
+                                    <div class="w-24 h-32 bg-gradient-to-br from-koshouko-wood/10 to-koshouko-red/10 rounded-lg flex items-center justify-center flex-shrink-0 border border-koshouko-border overflow-hidden">
+                                        @if($borrowing->book->cover_image && file_exists(public_path($borrowing->book->cover_image)))
+                                            <img src="{{ asset($borrowing->book->cover_image) }}" alt="{{ $borrowing->book->title }}" class="w-full h-full object-cover">
+                                        @else
+                                            <span class="text-4xl opacity-50">📖</span>
+                                        @endif
                                     </div>
 
                                     <!-- Details -->
@@ -59,10 +63,15 @@
                                                         {{ $borrowing->status === 'pending' ? 'bg-yellow-100 text-yellow-700' : '' }}
                                                         {{ $borrowing->status === 'approved' ? 'bg-green-100 text-green-700' : '' }}
                                                         {{ $borrowing->status === 'overdue' ? 'bg-red-100 text-red-700' : '' }}
+                                                        {{ $borrowing->status === 'pending_return' ? 'bg-blue-100 text-blue-700' : '' }}
                                                         {{ $borrowing->status === 'returned' ? 'bg-blue-100 text-blue-700' : '' }}
                                                         {{ $borrowing->status === 'rejected' ? 'bg-red-100 text-red-700' : '' }}
                                                     ">
-                                                        {{ ucfirst($borrowing->status) }}
+                                                        @if($borrowing->status === 'pending_return')
+                                                            Menunggu Konfirmasi
+                                                        @else
+                                                            {{ ucfirst(str_replace('_', ' ', $borrowing->status)) }}
+                                                        @endif
                                                     </span>
                                                 </div>
                                             </div>
@@ -84,11 +93,9 @@
                                         ⏳ Menunggu Persetujuan
                                     </div>
                                 @elseif($borrowing->status === 'approved' || $borrowing->status === 'overdue')
-                                    @if($borrowing->qr_code)
-                                        <button type="button" onclick="showQRModal('{{ asset($borrowing->qr_code) }}')" class="px-4 py-2 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg font-semibold transition text-sm hover:shadow-lg">
-                                            📱 Lihat QR Code
-                                        </button>
-                                    @endif
+                                    <a href="{{ route('borrowings.receipt', $borrowing) }}" target="_blank" class="px-4 py-2 bg-green-100 text-green-700 rounded-lg font-semibold transition text-sm border border-green-200 text-center">
+                                        📄 QR & Bukti
+                                    </a>
                                     <form action="{{ route('borrowings.return', $borrowing) }}" method="POST" class="inline">
                                         @csrf
                                         <button type="submit" class="px-4 py-2 btn-koshouko rounded-lg font-semibold transition text-sm">
@@ -108,6 +115,10 @@
                                             Tidak Bisa Perpanjang
                                         </button>
                                     @endif
+                                @elseif($borrowing->status === 'pending_return')
+                                    <div class="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-semibold text-center border border-blue-200">
+                                        ⏳ Menunggu Konfirmasi Pengembalian
+                                    </div>
                                 @elseif($borrowing->status === 'returned')
                                     <div class="px-4 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-semibold border border-green-200">
                                         ✓ Sudah Dikembalikan

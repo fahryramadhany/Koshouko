@@ -14,8 +14,8 @@
             <div class="sticky top-24 space-y-4">
                 <!-- Book Cover -->
                 <div class="rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-koshouko-wood/10 to-koshouko-red/10 aspect-[3/4] flex items-center justify-center">
-                    @if($book->cover_image && file_exists(public_path('storage/' . $book->cover_image)))
-                        <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
+                    @if($book->cover_image && file_exists(public_path($book->cover_image)))
+                        <img src="{{ asset($book->cover_image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
                     @else
                         <p class="text-6xl opacity-30">📚</p>
                     @endif
@@ -37,13 +37,9 @@
                 <!-- Action Buttons -->
                 @if($book->is_available)
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <form action="{{ route('borrowings.store') }}" method="POST" class="flex-1">
-                            @csrf
-                            <input type="hidden" name="book_id" value="{{ $book->id }}">
-                            <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white rounded-lg font-semibold hover:shadow-lg transition btn-koshouko">
-                                📤 Pinjam Buku
-                            </button>
-                        </form>
+                        <a href="{{ route('books.borrow', $book) }}" class="w-full px-6 py-3 bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white rounded-lg font-semibold hover:shadow-lg transition btn-koshouko text-center">
+                            📤 Pinjam Buku
+                        </a>
 
                         <a href="{{ route('books.borrow', $book) }}" class="w-full sm:w-44 px-4 py-3 border-2 border-koshouko-border text-koshouko-wood rounded-lg font-semibold hover:bg-koshouko-cream transition text-center">
                             📝 Isi Formulir

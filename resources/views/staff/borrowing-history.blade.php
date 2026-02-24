@@ -306,8 +306,20 @@
                                 <small style="color: #666;">{{ $borrowing->user->email }}</small>
                             </td>
                             <td>
-                                <strong>{{ $borrowing->book->title }}</strong><br>
-                                <small style="color: #666;">{{ $borrowing->book->author }}</small>
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <!-- Book Cover -->
+                                    <div style="width: 40px; height: 56px; background: linear-gradient(to bottom right, rgba(139, 90, 43, 0.1), rgba(220, 70, 44, 0.1)); border-radius: 0.375rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid #ddd; overflow: hidden;">
+                                        @if($borrowing->book->cover_image && file_exists(public_path($borrowing->book->cover_image)))
+                                            <img src="{{ asset($borrowing->book->cover_image) }}" alt="{{ $borrowing->book->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                        @else
+                                            <span style="font-size: 1.5rem; opacity: 0.5;">📖</span>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <strong>{{ $borrowing->book->title }}</strong><br>
+                                        <small style="color: #666;">{{ $borrowing->book->author }}</small>
+                                    </div>
+                                </div>
                             </td>
                             <td>{{ $borrowing->borrowed_at->format('d/m/Y H:i') }}</td>
                             <td>
@@ -318,15 +330,26 @@
                             </td>
                             <td>
                                 <span class="status-badge status-{{ $borrowing->status }}">
-                                    {{ ucfirst($borrowing->status) }}
+                                    @if($borrowing->status === 'pending_return')
+                                        Menunggu Konfirmasi
+                                    @else
+                                        {{ ucfirst(str_replace('_', ' ', $borrowing->status)) }}
+                                    @endif
                                 </span>
                             </td>
                             <td>
                                 @if($borrowing->status === 'approved')
                                     <form method="POST" action="{{ route('borrowings.return', $borrowing->id) }}" style="display: inline;">
                                         @csrf
+                                        <button type="submit" class="btn btn-small btn-success" onclick="return confirm('Minta pengembalian buku ke member?')">
+                                            ✓ Minta Kembali
+                                        </button>
+                                    </form>
+                                @elseif($borrowing->status === 'pending_return')
+                                    <form method="POST" action="{{ route('borrowings.confirm-return', $borrowing->id) }}" style="display: inline;">
+                                        @csrf
                                         <button type="submit" class="btn btn-small btn-success" onclick="return confirm('Konfirmasi pengembalian buku?')">
-                                            ✓ Terima Kembali
+                                            ✓ Konfirmasi Kembali
                                         </button>
                                     </form>
                                 @elseif($borrowing->status === 'pending')

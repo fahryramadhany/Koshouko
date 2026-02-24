@@ -1,8 +1,10 @@
+@use('Illuminate\Support\Facades\Storage')
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Koshouko')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -72,6 +74,72 @@
             border-bottom: 1px solid #D4C9B0;
             box-shadow: 0 1px 3px rgba(139, 90, 43, 0.08);
         }
+
+        /* Ensure .navbar (used in markup) is fixed at the top and visible immediately
+           even when compiled/public CSS is not present */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 70; /* higher than sidebar (z-50) so navbar stays on top */
+            height: 88px; /* slightly increased height for comfort */
+            background-color: #F0E4C8 !important;
+            border-bottom: 1px solid rgba(212, 201, 176, 0.4) !important;
+            box-shadow: 0 2px 4px rgba(139, 90, 43, 0.08) !important;
+        }
+
+        /* On large screens, shift navbar to account for sidebar width */
+        @media (min-width: 1024px) {
+            .navbar { left: 16rem; width: calc(100% - 16rem); }
+        }
+
+        /* Ensure navbar content is vertically centered inside the fixed navbar */
+        .navbar > div { height: 100%; display: flex; align-items: center; }
+
+        /* Padding for main content to avoid being covered by fixed navbar */
+        .main-with-navbar { padding-top: 110px !important; }
+
+        /* Ensure main content is offset from the fixed sidebar even before external CSS loads */
+        @media (min-width: 1024px) {
+            .main-with-navbar { padding-top: 110px !important; margin-left: 16rem !important; }
+        }
+
+        /* Borrowing form specific spacing and back-button styles */
+        /* Increase top spacing so header + back button are below the fixed navbar */
+        .content-with-spacing { margin-top: 1.25rem; margin-bottom: 1.25rem; }
+        @media (min-width: 640px) { .content-with-spacing { margin-top: 2.5rem; } }
+        @media (min-width: 1024px) { .content-with-spacing { margin-top: 5rem; } }
+
+        /* Header row used across pages to keep title + actions consistent */
+        .header-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        @media (max-width: 640px) { .header-row { flex-direction: column; align-items: flex-start; gap: 0.75rem; } }
+
+        .header-actions { display: flex; align-items: center; }
+
+        .back-button {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+            padding-top: 0.4rem;
+            padding-bottom: 0.4rem;
+            z-index: 20; /* slightly above page content but below navbar */
+            background: #fff;
+            position: relative;
+            top: 12px; /* slightly larger nudge on wide screens so it's clearly below navbar */
+        }
+        .back-button:hover { background: #F8F6F2; }
+
+        /* Reduce bottom whitespace on pages using this spacing class */
+        .content-with-spacing .gradient-card:last-of-type { margin-bottom: 0.5rem; }
+
+        /* Ensure header area is not overlapped and responsive */
+        @media (max-width: 640px) {
+            .content-with-spacing { margin-top: 2.5rem; }
+            .back-button { display: inline-block; top: 8px; }
+        }
+
+        /* Slightly reduce overall main min-height to avoid large empty areas for short pages */
+        .main-with-navbar { min-height: calc(100vh - 160px) !important; }
 
         @keyframes fadeIn {
             from {
@@ -188,9 +256,19 @@
             background-color: #F0E4C8 !important;
             background-image: none !important;
         }
+        /* Small inline fallback: shift main/footer right to clear fixed sidebar when
+           utility classes (Tailwind) are not present or blocked. */
+        @media (min-width: 1024px) {
+            .lg\:ml-64 { margin-left: 16rem !important; }
+        }
     </style>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Your custom CSS files will be compiled with npm later -->
     <link rel="stylesheet" href="{{ asset('css/layout.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/carousel.css') }}">
+    <script src="{{ asset('js/layout.js') }}"></script>
+    <script src="{{ asset('js/carousel.js') }}"></script>
+    <script src="{{ asset('js/member-pages.js') }}"></script>
 </head>
 <body style="background: linear-gradient(135deg, #E6CFA1 0%, #F3E9D2 100%);" class="text-koshouko-text min-h-screen">
     <!-- Mobile Sidebar Toggle -->
@@ -238,6 +316,11 @@
                                 <span class="text-xl mr-3">👥</span>
                                 <span class="font-medium">Kelola User</span>
                             </a>
+
+                            <a href="{{ route('admin.reviews.index') }}" class="sidebar-nav-item {{ request()->routeIs('admin.reviews*') ? 'active' : '' }} flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.reviews*') ? 'bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white shadow-lg' : 'text-koshouko-text hover:bg-koshouko-cream-light' }} transition">
+                                <span class="text-xl mr-3">⭐</span>
+                                <span class="font-medium">Ulasan & Rating</span>
+                            </a>
                         </div>
                     </div>
 
@@ -252,11 +335,6 @@
                             <a href="{{ route('admin.announcements') }}" class="sidebar-nav-item {{ request()->routeIs('admin.announcements*') ? 'active' : '' }} flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.announcements*') ? 'bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white shadow-lg' : 'text-koshouko-text hover:bg-koshouko-cream-light' }} transition">
                                 <span class="text-xl mr-3">📢</span>
                                 <span class="font-medium">Pengumuman</span>
-                            </a>
-
-                            <a href="{{ route('admin.reports') }}" class="sidebar-nav-item {{ request()->routeIs('admin.reports*') ? 'active' : '' }} flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('admin.reports*') ? 'bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white shadow-lg' : 'text-koshouko-text hover:bg-koshouko-cream-light' }} transition">
-                                <span class="text-xl mr-3">📈</span>
-                                <span class="font-medium">Laporan</span>
                             </a>
                         </div>
                     </div>
@@ -279,6 +357,15 @@
                                 <span class="text-xl mr-3">🏷️</span>
                                 <span class="font-medium">Kategori</span>
                             </a>
+                            <a href="{{ route('librarian.users.index') }}" class="sidebar-nav-item {{ request()->routeIs('librarian.users*') ? 'active' : '' }} flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('librarian.users*') ? 'bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white shadow-lg' : 'text-koshouko-text hover:bg-koshouko-cream-light' }} transition">
+                                <span class="text-xl mr-3">👥</span>
+                                <span class="font-medium">Kelola User</span>
+                            </a>
+
+                            <a href="{{ route('librarian.reviews.index') }}" class="sidebar-nav-item {{ request()->routeIs('librarian.reviews*') ? 'active' : '' }} flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('librarian.reviews*') ? 'bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white shadow-lg' : 'text-koshouko-text hover:bg-koshouko-cream-light' }} transition">
+                                <span class="text-xl mr-3">⭐</span>
+                                <span class="font-medium">Ulasan & Rating</span>
+                            </a>
                         </div>
                     </div>
 
@@ -293,11 +380,6 @@
                             <a href="{{ route('librarian.announcements') }}" class="sidebar-nav-item {{ request()->routeIs('librarian.announcements*') ? 'active' : '' }} flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('librarian.announcements*') ? 'bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white shadow-lg' : 'text-koshouko-text hover:bg-koshouko-cream-light' }} transition">
                                 <span class="text-xl mr-3">📢</span>
                                 <span class="font-medium">Pengumuman</span>
-                            </a>
-
-                            <a href="{{ route('librarian.reports') }}" class="sidebar-nav-item {{ request()->routeIs('librarian.reports*') ? 'active' : '' }} flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('librarian.reports*') ? 'bg-gradient-to-r from-koshouko-wood to-koshouko-red text-white shadow-lg' : 'text-koshouko-text hover:bg-koshouko-cream-light' }} transition">
-                                <span class="text-xl mr-3">📈</span>
-                                <span class="font-medium">Laporan</span>
                             </a>
                         </div>
                     </div>
@@ -349,9 +431,10 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="lg:ml-64">
-        <!-- Top Navbar -->
-        <nav class="navbar sticky top-0 z-30 border-b-2 border-koshouko-border" style="background: #F0E4C8; box-shadow: 0 1px 3px rgba(139, 90, 43, 0.08);">
+    <div class="lg:ml-64 main-with-navbar">
+        <!-- Top Navbar (fixed) -->
+        <nav class="navbar z-30 border-b-2 border-koshouko-border" style="background: #F0E4C8; box-shadow: 0 1px 3px rgba(139, 90, 43, 0.08);">
+
             <div class="px-6 py-4 flex items-center justify-between">
                 <div class="flex items-center space-x-4">
                     <button onclick="toggleMobileMenu()" class="lg:hidden text-koshouko-text hover:text-koshouko-wood transition">
@@ -380,9 +463,17 @@
                                 <p class="text-sm font-semibold text-koshouko-text">{{ auth()->user()->name }}</p>
                                 <p class="text-xs text-koshouko-text-muted">{{ auth()->user()->member_id ?? 'Admin' }}</p>
                             </div>
-                            <div class="w-10 h-10 bg-gradient-to-br from-koshouko-wood to-koshouko-red rounded-full flex items-center justify-center text-white font-bold">
-                                {{ substr(auth()->user()->name, 0, 1) }}
-                            </div>
+                            @if(auth()->user()->profile_photo)
+                                <img src="{{ Storage::url(auth()->user()->profile_photo) }}" 
+                                     alt="Avatar {{ auth()->user()->name }}"
+                                     class="w-10 h-10 rounded-full object-cover border-2 border-koshouko-wood shadow-md hover:shadow-lg transition cursor-pointer"
+                                     onclick="window.location.href='{{ route('profile.edit') }}'">
+                            @else
+                                <div class="w-10 h-10 bg-gradient-to-br from-koshouko-wood to-koshouko-red rounded-full flex items-center justify-center text-white font-bold text-sm hover:shadow-lg transition cursor-pointer"
+                                     onclick="window.location.href='{{ route('profile.edit') }}'">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
+                                </div>
+                            @endif
                         </div>
                     </div>
                 @endauth
@@ -399,12 +490,6 @@
                             <li>• {{ $error }}</li>
                         @endforeach
                     </ul>
-                </div>
-            @endif
-
-            @if(session('success'))
-                <div class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4 animate-pulse">
-                    <p class="text-sm font-semibold text-green-800">✓ {{ session('success') }}</p>
                 </div>
             @endif
 

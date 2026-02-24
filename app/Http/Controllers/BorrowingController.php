@@ -61,6 +61,33 @@ class BorrowingController extends Controller
         return $this->store($request);
     }
 
+    /**
+     * Compatibility handler: accept POSTs sent to the books index (e.g. legacy modal that submitted
+     * to the current URL). If the payload looks like a borrowing request, normalize it and delegate
+     * to the canonical store() method. Otherwise, return a safe redirect.
+     */
+    public function storeFromBooksIndex(Request $request)
+    {
+        // If it doesn't look like a borrowing request, redirect back to books index
+        if (! $request->has('from') && ! $request->has('book_id')) {
+            return redirect()->route('books.index');
+        }
+
+        // If the modal used no explicit book_id but included other markers, try to use supplied book_id
+        $bookId = $request->input('book_id') ?? null;
+        if (! $bookId && $request->has('selected_book')) {
+            $bookId = $request->input('selected_book');
+        }
+
+        if ($bookId) {
+            $request->merge(['book_id' => $bookId]);
+            return $this->store($request);
+        }
+
+        // Fallback: redirect with error to avoid 405
+        return back()->with('error', 'Permintaan tidak valid. Silakan coba lagi.');
+    }
+
     public function index()
     {
         $user = Auth::user();
@@ -100,6 +127,7 @@ class BorrowingController extends Controller
 
         $user = Auth::user();
         $book = Book::findOrFail($validated['book_id']);
+
 
         // Check if book is available
         if ($book->available_copies <= 0) {
@@ -153,8 +181,56 @@ class BorrowingController extends Controller
     {
         $this->authorize('own', $borrowing);
 
-        if ($borrowing->status !== 'approved') {
+        if ($borrowing->status !== 'approved' && $borrowing->status !== 'overdue') {
             return back()->with('error', 'Peminjaman tidak dapat dikembalikan saat ini.');
+        }
+
+        $borrowing->update([
+            'status' => 'pending_return',
+        ]);
+
+        return back()->with('success', 'Permintaan pengembalian buku telah diajukan. Menunggu konfirmasi dari petugas pustaka.');
+    }
+
+    public function renew(Borrowing $borrowing, Request $request)
+    {
+        $this->authorize('own', $borrowing);
+
+        if ($borrowing->status !== 'approved' && $borrowing->status !== 'overdue') {
+            return back()->with('error', 'Peminjaman tidak dapat diperpanjang saat ini.');
+        }
+
+        if ($borrowing->renewal_count >= 2) {
+            return back()->with('error', 'Peminjaman hanya dapat diperpanjang maksimal 2 kali.');
+        }
+
+        $borrowing->update([
+            'due_date' => $borrowing->due_date->addDays(7),
+            'renewal_count' => $borrowing->renewal_count + 1,
+        ]);
+
+        return back()->with('success', 'Peminjaman berhasil diperpanjang selama 7 hari.');
+    }
+
+    /**
+     * Show printable borrowing receipt (only if approved)
+     */
+    public function receipt(Borrowing $borrowing)
+    {
+        $this->authorize('view', $borrowing);
+        if ($borrowing->status !== 'approved') {
+            abort(403, 'Bukti hanya tersedia setelah peminjaman disetujui.');
+        }
+        return view('borrowings.receipt', compact('borrowing'));
+    }
+
+    /**
+     * Admin/Librarian confirms return of book
+     */
+    public function confirmReturn(Borrowing $borrowing)
+    {
+        if ($borrowing->status !== 'pending_return') {
+            return back()->with('error', 'Permintaan pengembalian tidak valid.');
         }
 
         $borrowing->update([
@@ -180,26 +256,6 @@ class BorrowingController extends Controller
             }
         }
 
-        return back()->with('success', 'Buku berhasil dikembalikan.');
-    }
-
-    public function renew(Borrowing $borrowing, Request $request)
-    {
-        $this->authorize('own', $borrowing);
-
-        if ($borrowing->status !== 'approved' && $borrowing->status !== 'overdue') {
-            return back()->with('error', 'Peminjaman tidak dapat diperpanjang saat ini.');
-        }
-
-        if ($borrowing->renewal_count >= 2) {
-            return back()->with('error', 'Peminjaman hanya dapat diperpanjang maksimal 2 kali.');
-        }
-
-        $borrowing->update([
-            'due_date' => $borrowing->due_date->addDays(7),
-            'renewal_count' => $borrowing->renewal_count + 1,
-        ]);
-
-        return back()->with('success', 'Peminjaman berhasil diperpanjang selama 7 hari.');
+        return back()->with('success', 'Pengembalian buku berhasil dikonfirmasi.');
     }
 }

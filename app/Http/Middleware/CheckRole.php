@@ -27,7 +27,15 @@ class CheckRole
         }
         
         if (!$user->role || !in_array($user->role->name, $roles)) {
-            abort(403, 'Akses ditolak.');
+            \Log::warning('Unauthorized access blocked by CheckRole', [
+                'user_id' => $user->id ?? null,
+                'role' => $user->role->name ?? null,
+                'required_roles' => $roles,
+                'path' => $request->path(),
+            ]);
+
+            // Redirect to dashboard with friendly message instead of generic 403 page
+            return redirect()->route('dashboard')->with('error', 'Akses ditolak. Anda tidak memiliki izin untuk halaman ini.');
         }
 
         return $next($request);

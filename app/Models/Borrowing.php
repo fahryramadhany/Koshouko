@@ -13,7 +13,8 @@ class Borrowing extends Model
     protected $fillable = [
         'user_id', 'book_id', 'borrowed_at', 'due_date',
         'returned_at', 'status', 'renewal_count', 'notes',
-        'qr_code', 'approved_by', 'approved_at', 'rejection_reason'
+        'qr_code', 'approved_by', 'approved_at', 'rejection_reason',
+        'code'
     ];
 
     protected $casts = [

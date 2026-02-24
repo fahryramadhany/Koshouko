@@ -1,0 +1,369 @@
+/* Public copy of member-pages.css - fallback for environments without Vite/Mix build (local/XAMPP)
+   This file is a direct copy of resources/css/member-pages.css with added aliases.
+*/
+
+/* Backwards-compatible aliases: some blade templates use generic class names
+   (e.g. .gradient-card, .btn-koshouko). Provide these to avoid visual breakage
+   when the build step wasn't executed and classes diverged. */
+.gradient-card {
+    border-radius: 1rem;
+    background-color: #FEF9F3 !important;
+    border: 1px solid rgba(139, 90, 43, 0.08) !important;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    transition: all 0.3s ease;
+}
+
+.gradient-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(139, 90, 43, 0.15) !important;
+}
+
+.btn-koshouko {
+    background: linear-gradient(135deg, #8B5A2B 0%, #B63A2B 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-koshouko:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 90, 43, 0.3);
+}
+
+/* Fallback utilities for borrowing form when Tailwind is not available
+   These are scoped to avoid interfering with full Tailwind-based layouts. */
+.max-w-3xl { max-width: 768px; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.p-8 { padding: 2rem; }
+.p-6 { padding: 1.5rem; }
+.rounded-2xl { border-radius: 1rem; }
+.rounded-xl { border-radius: 0.75rem; }
+.w-full { width: 100%; box-sizing: border-box; }
+.space-y-6 > * + * { margin-top: 1.5rem; }
+
+/* Responsive & positioning utilities (important for layout with fixed sidebar) */
+.fixed { position: fixed; }
+.sticky { position: sticky; }
+.left-0 { left: 0; }
+.top-0 { top: 0; }
+.h-full { height: 100%; }
+.w-64 { width: 16rem; }
+.z-30 { z-index: 30; }
+.z-50 { z-index: 50; }
+
+/* Transform & translate utilities used by sidebar toggles */
+.translate-x-0 { transform: translateX(0); }
+.-translate-x-full { transform: translateX(-100%); }
+.translate-x-full { transform: translateX(100%); }
+
+/* Transition / timing utilities */
+.transition-transform { transition-property: transform; }
+.duration-300 { transition-duration: 300ms; }
+
+/* Utility to cover the viewport (used for mobile backdrop) */
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+
+/* Responsive margin-left for large screens (sidebar width compensation) */
+@media (min-width: 1024px) {
+    .lg\:ml-64 { margin-left: 16rem; }
+    .lg\:hidden { display: none !important; }
+    .lg\:translate-x-0 { transform: translateX(0); }
+
+    /* Override layout's !important rule so sidebar is visible on large screens */
+    .sidebar.lg\:translate-x-0 { transform: translateX(0) !important; }
+}
+
+/* Form-specific layout helpers (scoped via .borrow-form on the element) */
+.borrow-form .grid { display: grid; gap: 1.5rem; }
+.borrow-form .grid-cols-1 { grid-template-columns: 1fr; }
+@media (min-width: 768px) {
+  .borrow-form .md\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+}
+.borrow-form .gap-6 { gap: 1.5rem; }
+
+.borrow-form label.cursor-pointer { cursor: pointer; display: flex; align-items: center; }
+
+/* Basic input/select/textarea styling to approximate Tailwind look */
+.borrow-form input[type="text"],
+.borrow-form input[type="email"],
+.borrow-form input[type="date"],
+.borrow-form select,
+.borrow-form textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #CFC7B8;
+    border-radius: 0.5rem;
+    background: #FFFFFF;
+    color: #3B2A1A;
+    font-size: 0.95rem;
+    box-shadow: none;
+}
+
+.borrow-form input[disabled], .borrow-form input[readonly] {
+    background: #F3E9D2;
+    color: #6B4F3F;
+}
+
+.hidden { display: none !important; }
+
+/* Theme helper classes used by scripts */
+.border-koshouko-border { border-color: #CFC7B8 !important; }
+.border-koshouko-wood { border-color: #8B5A2B !important; }
+.bg-koshouko-cream { background-color: #E6CFA1 !important; }
+.bg-koshouko-cream\/30 { background-color: rgba(230,207,161,0.3) !important; }
+.text-koshouko-text { color: #3B2A1A !important; }
+.text-koshouko-text-muted { color: #6B4F3F !important; }
+.text-koshouko-wood { color: #8B5A2B !important; }
+.text-koshouko-red { color: #B63A2B !important; }
+
+/* ===================================
+   KOSHOUKO MEMBER PAGES STYLES
+   CSS untuk halaman-halaman member (dashboard, profile, borrowings, books)
+   =================================== */
+
+/* Dashboard Page - Welcome Section */
+.welcome-section {
+    background: #FEF9F3;
+    border: 1px solid rgba(139, 90, 43, 0.1);
+    border-radius: 1.5rem;
+}
+
+/* Member Page Gradient Cards - Variation 1 */
+.member-gradient-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    transition: all 0.3s ease;
+    border-radius: 1rem;
+    border: 1px solid rgba(139, 90, 43, 0.1) !important;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    opacity: 1 !important;
+}
+
+.member-gradient-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(139, 90, 43, 0.15) !important;
+}
+
+/* Member Stat Cards - Variation 2 & 3 */
+.member-stat-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border: 1px solid rgba(139, 90, 43, 0.1) !important;
+    transition: all 0.3s ease;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    opacity: 1 !important;
+}
+
+.member-stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(139, 90, 43, 0.2) !important;
+}
+
+/* Member Stat Cards - Alternate style */
+.member-stat-card:nth-child(2) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+.member-stat-card:nth-child(3) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+.member-stat-card:nth-child(4) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+/* Member Button Styling */
+.member-btn-koshouko {
+    background: linear-gradient(135deg, #8B5A2B 0%, #B63A2B 100%);
+    color: white;
+    transition: all 0.3s ease;
+    border: none;
+    font-weight: 500;
+}
+
+.member-btn-koshouko:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 90, 43, 0.3);
+}
+
+/* Global primary button to match login .btn-primary */
+.btn-primary {
+    background: linear-gradient(135deg, #8B5A2B 0%, #B63A2B 100%);
+    color: white !important;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 90, 43, 0.3);
+}
+
+/* Borrowings Page Tab Styling */
+.borrowing-tab-btn {
+    font-weight: 600;
+    color: #6B4F3F;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    padding: 0.75rem 1.5rem;
+}
+
+.borrowing-tab-btn:hover {
+    border-bottom-color: rgba(139, 90, 43, 0.5);
+}
+
+.borrowing-tab-btn.active {
+    border-bottom-color: #8B5A2B;
+    color: #3B2A1A;
+}
+
+/* Borrowing Card - Variation 1 */
+.borrowing-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(139, 90, 43, 0.08) !important;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    opacity: 1 !important;
+}
+
+.borrowing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(139, 90, 43, 0.15) !important;
+}
+
+/* Borrowing Card - Variation 2 */
+.borrowing-card:nth-child(2) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+.borrowing-card:nth-child(3) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+.borrowing-card:nth-child(4n) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+/* Books Index Filter Card */
+.books-filter-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(139, 90, 43, 0.08) !important;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    transition: all 0.3s ease;
+    opacity: 1 !important;
+}
+
+/* Books Grid Items - Multiple Variations */
+.book-item {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border-radius: 1rem;
+    border: 1px solid rgba(139, 90, 43, 0.08) !important;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    opacity: 1 !important;
+}
+
+.book-item:nth-child(2) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+.book-item:nth-child(3) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+.book-item:nth-child(4) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+.book-item:nth-child(4n+1) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+.book-item:nth-child(4n+2) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+.book-item:nth-child(4n+3) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+.book-item:nth-child(4n+4) {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+}
+
+.book-item:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 40px rgba(139, 90, 43, 0.2);
+}
+
+/* Book Detail Page */
+.book-detail-section {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(139, 90, 43, 0.1) !important;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    opacity: 1 !important;
+}
+
+/* Profile Page */
+.profile-info-card {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(139, 90, 43, 0.1) !important;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    opacity: 1 !important;
+}
+
+.profile-header {
+    background: #F0E4C8;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(212, 201, 176, 0.5);
+}
+
+.profile-history-item {
+    background-color: #FEF9F3 !important;
+    background-image: none !important;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    border-left: 4px solid #8B5A2B;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(139, 90, 43, 0.1) !important;
+    opacity: 1 !important;
+}
+
+.profile-history-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 10px 30px rgba(139, 90, 43, 0.15) !important;
+}

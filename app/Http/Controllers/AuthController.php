@@ -66,4 +66,14 @@ class AuthController extends Controller
 
         return redirect('/login');
     }
+
+    /**
+     * Fallback logout via GET to support clients that accidentally request /logout with GET
+     * (some browsers or proxies may issue GET on form actions or bookmarks).
+     * This simply delegates to the normal logout flow.
+     */
+    public function logoutGet(Request $request)
+    {
+        return $this->logout($request);
+    }
 }

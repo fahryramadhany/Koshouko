@@ -1,0 +1,95 @@
+/* ===================================
+   KOSHOUKO BUTTONS
+   Button styles and variants
+   =================================== */
+
+.btn-koshouko {
+    background: linear-gradient(135deg, #8B5A2B 0%, #B63A2B 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-koshouko:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(139, 90, 43, 0.3);
+}
+
+.btn-koshouko:active {
+    transform: translateY(0);
+}
+
+.btn-koshouko:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Button Variants */
+.btn-outline {
+    background: transparent;
+    border: 2px solid #8B5A2B;
+    color: #8B5A2B;
+}
+
+.btn-outline:hover {
+    background: #8B5A2B;
+    color: white;
+}
+
+.btn-secondary {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #d0d0d0;
+}
+
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+/* Button Sizes */
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+/* Button Groups */
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
